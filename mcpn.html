@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>MCPN</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="mcpn-layout">
+
+    <aside class="mcpn-sidebar">
+
+        <button class="side-btn active" title="Accueil MCPN" onclick="afficherAccueilMCPN()">
+            <img src="mcpn-logo.png" class="side-icon">
+        </button>
+
+        <button class="side-btn" title="Prise de Service" onclick="afficherPriseService()">
+            <span class="side-icon-text">PS</span>
+        </button>
+
+    </aside>
+
+    <main class="mcpn-main">
+        <div class="mcpn-session-box">
+    <p id="mcpn-connected-user">
+        Connecté en tant que : ---
+    </p>
+</div>
+
+        <section id="mcpn-home" class="mcpn-panel">
+            <div class="mcpn-home-screen">
+                <img src="mcpn-logo.png" class="mcpn-home-logo">
+                <h1>Main Courante Police Nationale</h1>
+                <p>Bienvenue sur l’espace MCPN sécurisé.</p>
+            </div>
+        </section>
+
+        <section id="prise-service-step1" class="mcpn-panel" style="display:none;">
+
+            <h2>Prise de Service</h2>
+
+            <label>Libellé</label>
+            <select id="libelle">
+                <option>CPN VANNE AGGLO</option>
+            </select>
+
+            <label>Unité</label>
+            <select id="unite">
+                <option>UPS J1</option>
+                <option>UPS J2</option>
+                <option>UPS N1</option>
+                <option>UPS N2</option>
+                <option>UAO MA</option>
+                <option>UAO AM</option>
+            </select>
+
+            <button class="mcpn-button" id="btn-initialiser" onclick="initialiserPriseService()">
+                <span class="btn-text">Initialiser</span>
+                <span class="spinner" style="display:none;"></span>
+            </button>
+
+        </section>
+
+        <section id="prise-service-step2" class="mcpn-panel" style="display:none;">
+
+            <h2>Présence des effectifs</h2>
+
+            <div class="personnel-zone">
+
+                <div class="agent-list" id="agent-list"></div>
+
+                <div class="drop-columns">
+
+                    <div class="drop-zone" id="absents"
+                         ondragover="allowDrop(event)"
+                         ondragenter="dragEnter(event)"
+                         ondragleave="dragLeave(event)"
+                         ondrop="dropAgent(event, 'absents')">
+                        <h3>Absents</h3>
+                    </div>
+
+                    <div class="drop-zone" id="presents"
+                         ondragover="allowDrop(event)"
+                         ondragenter="dragEnter(event)"
+                         ondragleave="dragLeave(event)"
+                         ondrop="dropAgent(event, 'presents')">
+                        <h3>Présents</h3>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

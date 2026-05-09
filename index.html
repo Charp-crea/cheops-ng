@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHEOPS-NG</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="background-grid"></div>
+
+    <div class="login-container">
+
+        <div class="logo-section">
+
+            <img src="logo.png" class="main-logo">
+
+            <h1>Portail de la Police Nationale</h1>
+            <p>Circulation Hiérarchisée des Enregistrements Opérationnels de Police Sécurisés - Nouvelle Génération</p>
+        </div>
+
+        <div class="login-box">
+
+    <h2 id="auth-title">Interface d'Authentification</h2>
+
+    <div id="step-matricule">
+        <input id="matricule" type="text" placeholder="Matricule">
+        <button onclick="verifierMatricule()">CONNEXION</button>
+    </div>
+
+    <div id="step-password" style="display:none;">
+        <p id="matricule-display"></p>
+
+        <input id="password" type="password" placeholder="Mot de passe">
+
+        <div id="first-login-fields" style="display:none;">
+            <input id="password-confirm" type="password" placeholder="Confirmer le mot de passe">
+        </div>
+
+        <button onclick="verifierMotDePasse()">CONNEXION</button>
+    </div>
+
+    <p id="message"></p>
+
+</div>
+
+        <div class="footer-info">
+            <p>MINISTÈRE DE L'INTÉRIEUR</p>
+            <p>Direction du Numérique</p>
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>

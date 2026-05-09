@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Administration des Habilitations</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="gestion-container">
+
+        <h1>Administration des Habilitations</h1>
+        <p class="subtitle">Accès réservé aux Gestionnaires Niveau 2</p>
+
+        <section class="gestion-panel">
+            <h2>Agents enregistrés</h2>
+
+            <div id="agents-list"></div>
+        </section>
+
+        <section class="gestion-panel">
+            <h2>Modifier un agent</h2>
+
+            <input id="new-matricule" placeholder="Matricule">
+            <input id="new-grade" placeholder="Grade">
+            <input id="new-nom" placeholder="Nom">
+            <input id="new-prenom" placeholder="Prénom">
+
+            <select id="new-niveau">
+                <option value="1">Niveau 1 - Inscripteur</option>
+                <option value="2">Niveau 2 - Gestionnaire</option>
+            </select>
+
+            <input id="new-qualification" placeholder="Qualification judiciaire ex: APJ / OPJ / APJA">
+
+            <button onclick="ajouterAgent()">Enregistrer</button>
+        </section>
+
+        <button class="back-button" onclick="window.location.href='accueil.html'">
+            Retour CHEOPS NG
+        </button>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

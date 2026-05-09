@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHEOPS - Nouvelle Génération</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="home-container">
+
+        <div class="session-box">
+            <div>
+                <p id="connected-user">Connecté en tant que : ---</p>
+                <p id="session-timer">Durée de connexion : 00:00:00</p>
+            </div>
+
+            <button class="power-button" onclick="deconnexion()">
+                ⏻
+            </button>
+        </div>
+
+        <header class="home-header">
+            <img src="logo.png" class="home-logo">
+
+            <h1>CHEOPS - Nouvelle Génération</h1>
+
+            <p>
+                Circulation Hiérarchisée des Enregistrements Opérationnels de Police Sécurisés
+            </p>
+        </header>
+
+        <main class="app-zone">
+
+            <section class="category-band">
+                Aide à l'Enquête
+            </section>
+
+            <div class="apps-grid">
+
+                <div class="app-card">
+                    <div class="app-logo">LRPPN</div>
+                    <p>Logiciel de Rédaction des Procédures Police Nationale</p>
+                </div>
+
+                <div class="app-card" onclick="window.location.href='mcpn-login.html'">
+    <img src="mcpn-logo.png" class="app-icon">
+    <p>Main Courante Police Nationale</p>
+</div>
+
+                <div class="app-card">
+                    <div class="app-logo">FPR</div>
+                    <p>Fichier des Personnes Recherchées</p>
+                </div>
+
+                <div class="app-card">
+                    <div class="app-logo">TAJ</div>
+                    <p>Traitement d'Antécédents Judiciaires</p>
+                </div>
+
+                <div class="app-card restricted-app" id="gestion-app" onclick="ouvrirGestionnaire()">
+    <div class="app-logo">ADM</div>
+    <p>CHEOPS-NG ADM</p>
+</div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

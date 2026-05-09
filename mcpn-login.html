@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Authentification MCPN</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="mcpn-login-container">
+
+    <div class="mcpn-login-box">
+
+        <img src="mcpn-logo.png" class="mcpn-login-logo">
+
+        <h1>Main Courante Police Nationale</h1>
+
+        <label>Identifiant Utilisateur</label>
+        <input id="mcpn-identifiant" type="text">
+
+        <label>Service</label>
+        <select id="mcpn-service">
+            <option>CPN VANNES AGGLO</option>
+        </select>
+
+        <label>Habilitation</label>
+        <input id="mcpn-habilitation" type="text" readonly>
+
+        <button class="mcpn-button" onclick="connexionMCPN()">
+            Authentification MCPN
+        </button>
+
+    </div>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
