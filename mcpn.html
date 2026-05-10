@@ -10,7 +10,6 @@
 <div class="mcpn-layout">
 
     <aside class="mcpn-sidebar">
-
         <button class="side-btn active" title="Accueil MCPN" onclick="afficherAccueilMCPN()">
             <img src="mcpn-logo.png" class="side-icon">
         </button>
@@ -19,14 +18,35 @@
             <span class="side-icon-text">PS</span>
         </button>
 
-    </aside>
+        <button class="side-btn" title="Gestion d'Activités" onclick="afficherGestionActivites()">
+            <span class="side-icon-text">GA</span>
+        </button>
+
+        <button class="side-btn" title="Gestion d'Évènement" onclick="afficherGestionEvenement()">
+            <span class="side-icon-text">GE</span>
+        </button>
+
+        <button class="side-btn" title="Mention de Service" onclick="afficherMentionService()">
+        <span class="side-icon-text">MS</span>
+        </button>
+
+        <button class="side-btn" title="Statistiques Opérationnelles" onclick="afficherStatistiques()">
+        <span class="side-icon-text">ST</span>
+        </button>
+        </aside>
 
     <main class="mcpn-main">
+
+        <button class="mcpn-home-return" onclick="afficherAccueilMCPN()">
+        Retour accueil MCPN
+        </button>
+        <button class="mcpn-power-button" onclick="deconnexionMCPN()">
+        ⏻
+        </button>
+
         <div class="mcpn-session-box">
-    <p id="mcpn-connected-user">
-        Connecté en tant que : ---
-    </p>
-</div>
+            <p id="mcpn-connected-user">Connecté en tant que : ---</p>
+        </div>
 
         <section id="mcpn-home" class="mcpn-panel">
             <div class="mcpn-home-screen">
@@ -37,7 +57,6 @@
         </section>
 
         <section id="prise-service-step1" class="mcpn-panel" style="display:none;">
-
             <h2>Prise de Service</h2>
 
             <label>Libellé</label>
@@ -60,18 +79,25 @@
                 <span class="spinner" style="display:none;"></span>
             </button>
 
+            <div class="service-hours-panel">
+    <h3>Services à venir</h3>
+    <div id="services-a-venir-container"></div>
+
+    <h3 style="margin-top:30px;">Services en cours</h3>
+    <div id="services-container"></div>
+
+    <h3 style="margin-top:30px;">Services terminés</h3>
+    <div id="services-termines-container"></div>
+</div>
         </section>
 
         <section id="prise-service-step2" class="mcpn-panel" style="display:none;">
-
             <h2>Présence des effectifs</h2>
 
             <div class="personnel-zone">
-
                 <div class="agent-list" id="agent-list"></div>
 
                 <div class="drop-columns">
-
                     <div class="drop-zone" id="absents"
                          ondragover="allowDrop(event)"
                          ondragenter="dragEnter(event)"
@@ -87,17 +113,379 @@
                          ondrop="dropAgent(event, 'presents')">
                         <h3>Présents</h3>
                     </div>
-
                 </div>
-
             </div>
 
+            <div class="service-hours-panel">
+
+    <h3>Composition du Service</h3>
+
+    <label>Autorité de Permanence</label>
+    <select id="autorite-permanence"></select>
+
+    <label>Officier de Police Judiciaire de Permanence</label>
+    <select id="opj-permanence"></select>
+
+    <label>Chef de Service</label>
+    <input id="chef-service" type="text" placeholder="Chef de Service">
+
+</div>
+
+            <div class="service-hours-panel">
+                <h3>Horaires de service</h3>
+
+                <label>Début de service</label>
+                <input id="debut-service" type="datetime-local">
+
+                <label>Fin de service</label>
+                <input id="fin-service" type="datetime-local">
+
+                <button class="mcpn-button" onclick="enregistrerPriseService()">
+                    Enregistrer
+                </button>
+            </div>
         </section>
+
+        <section id="gestion-activites" class="mcpn-panel mcpn-wide-panel" style="display:none;">
+
+    <h2>Gestion d'Activités</h2>
+
+    <button class="mcpn-button" onclick="afficherCreationEquipage()">
+        Créer un équipage
+    </button>
+
+    <div id="creation-equipage-panel" class="service-hours-panel" style="display:none;">
+
+        <label>Service affilié</label>
+        <select id="equipage-service" onchange="chargerServiceEquipage()"></select>
+
+        <h3>Création d’un équipage</h3>
+
+        <label>Indicatif</label>
+        <input id="equipage-indicatif" type="text" placeholder="Exemple : VP 01">
+
+        <label>Unité</label>
+        <input id="equipage-unite" type="text" readonly>
+
+        <label>Composition</label>
+        <div id="equipage-composition-list" class="agent-list"></div>
+
+        <label>Véhicule</label>
+        <select id="equipage-vehicule">
+            <option>AA-123-BB</option>
+            <option>BC-456-DE</option>
+            <option>PN-751-VA</option>
+            <option>DJ-092-LP</option>
+        </select>
+
+        <label>Début de service</label>
+        <input id="equipage-debut" type="datetime-local" readonly>
+
+        <label>Fin de service</label>
+        <input id="equipage-fin" type="datetime-local" readonly>
+
+        <button class="mcpn-button" onclick="enregistrerEquipage()">
+            Enregistrer l’équipage
+        </button>
+
+    </div>
+
+    <div id="equipages-list" class="service-hours-panel">
+    <h3>Équipages actuels</h3>
+    <div id="equipages-container"></div>
+</div>
+
+<div id="activite-equipage-panel" class="service-hours-panel" style="display:none;">
+    <h3 id="activite-equipage-title">Activité équipage</h3>
+    <div id="activite-timeline"></div>
+</div>
+
+</section>
+
+<section id="gestion-evenement" class="mcpn-panel mcpn-wide-panel" style="display:none;">
+
+    <div class="mcpn-home-screen">
+        <img src="mcpn-logo.png" class="mcpn-home-logo">
+        <h1>Gestion d'Évènement</h1>
+    </div>
+    <div class="service-hours-panel">
+    <h3>GE récentes</h3>
+    <div id="ge-list-container-home"></div>
+    </div>
+
+    <div id="ge-initialisation" class="service-hours-panel">
+        <h3>Initialisation</h3>
+
+        <label>Équipage intervenant</label>
+        <select id="ge-equipage"></select>
+
+        <label>Connaissance des faits</label>
+        <input id="ge-connaissance" type="datetime-local">
+
+        <button class="mcpn-button" onclick="initialiserGE()">
+            Initialiser
+        </button>
+    </div>
+
+    <div id="ge-formulaire" style="display:none;">
+
+        <div class="service-hours-panel">
+            <h3>Informations principales</h3>
+
+            <p><strong>Connaissance des faits :</strong> <span id="ge-recap-connaissance"></span></p>
+            <p><strong>Équipage principal :</strong> <span id="ge-recap-equipage"></span></p>
+
+            <label>Ajouter un équipage intervenant</label>
+            <select id="ge-equipage-supp"></select>
+            <button class="mcpn-button" onclick="ajouterEquipageGE()">Ajouter</button>
+
+            <div id="ge-equipages-intervenants"></div>
+
+            <label>Date et heure d'avis des intervenants</label>
+            <input id="ge-avis-intervenants" type="datetime-local">
+
+            <label>Motif de l'intervention</label>
+            <select id="ge-motif">
+                <option>Bruits ou Tapages injurieux</option>
+                <option>Accident Matériel de la Circulation (AVP)</option>
+                <option>Accident Corporel de la Circulation (AVP)</option>
+                <option>Accident Mortel de la Circulation (AVP)</option>
+                <option>Violences Conjugales</option>
+                <option>Différend Routier</option>
+                <option>Rixe ou Agression</option>
+                <option>Vol simple</option>
+                <option>Dégradation</option>
+                <option>Ivresse Publique et Manifeste</option>
+                <option>Différend Familial</option>
+            </select>
+
+            <label>Origine de l'intervention</label>
+            <select id="ge-origine">
+                <option>Appels 17 ou 112</option>
+                <option>Appels 18</option>
+                <option>Appels 15</option>
+                <option>Initiative ou Requérant Spontané</option>
+                <option>Doléance</option>
+                <option>Instruction Hiérarchique</option>
+            </select>
+
+            <label>Adresse de l'intervention</label>
+            <input id="ge-adresse" type="text">
+
+            <label>Complément d'adresse</label>
+            <input id="ge-complement-adresse" type="text">
+
+            <label>Date et heure d'arrivée sur les lieux</label>
+            <input id="ge-arrivee" type="datetime-local">
+
+            <label>Compte-rendu</label>
+            <textarea id="ge-compte-rendu" class="ge-textarea"></textarea>
+
+            <label>Date et heure du départ des lieux</label>
+            <input id="ge-depart" type="datetime-local">
+        </div>
+
+        <div class="service-hours-panel">
+            <h3>Personnes impliquées</h3>
+
+            <button class="mcpn-button" onclick="ajouterPersonneGE()">Ajouter une personne</button>
+
+            <div id="ge-personnes"></div>
+        </div>
+
+        <div class="service-hours-panel">
+            <h3>Véhicules impliqués</h3>
+
+            <button class="mcpn-button" onclick="ajouterVehiculeGE()">Ajouter un véhicule</button>
+
+            <div id="ge-vehicules"></div>
+        </div>
+
+        <div class="service-hours-panel">
+    <button class="mcpn-button" id="btn-finaliser-ge" onclick="finaliserGE()">
+        <span class="btn-text">Finaliser</span>
+        <span class="spinner" style="display:none;"></span>
+    </button>
+</div>
+
+<div class="service-hours-panel">
+    <h3>GE récentes</h3>
+    <div id="ge-list-container"></div>
+</div>
+
+    </div>
+
+</section>
+
+<section id="details-ge" class="mcpn-panel mcpn-wide-panel" style="display:none;">
+    <h2>Détails de la GE</h2>
+
+    <div id="details-ge-container"></div>
+</section>
+
+<section id="details-ms" class="mcpn-panel mcpn-wide-panel" style="display:none;">
+    <h2>Détails de la Mention de Service</h2>
+
+    <div id="details-ms-container"></div>
+</section>
+
+<section id="details-service" class="mcpn-panel mcpn-wide-panel" style="display:none;">
+    <h2>Détails du service</h2>
+    <div id="details-service-container"></div>
+
+    <button class="mcpn-button" onclick="afficherPriseService()">
+        Retour
+    </button>
+</section>
+
+<section id="mention-service" class="mcpn-panel mcpn-wide-panel" style="display:none;">
+
+    <div class="mcpn-home-screen">
+        <img src="mcpn-logo.png" class="mcpn-home-logo">
+        <h1>Mention de Service</h1>
+    </div>
+
+    <div class="service-hours-panel">
+        <h3>MS récentes</h3>
+        <div id="ms-list-container"></div>
+    </div>
+
+    <div id="ms-initialisation" class="service-hours-panel">
+        <h3>Initialisation</h3>
+
+        <label>Date et heure</label>
+        <input id="ms-date" type="datetime-local">
+
+        <label>Motif</label>
+        <select id="ms-motif">
+            <option value="">Sélectionner un motif</option>
+            <option>Véhicule, Armement, Équipement</option>
+            <option>Locaux de Police</option>
+            <option>Port de Pli / Convocation</option>
+            <option>Complément de GE</option>
+            <option>Execution de Consigne</option>
+            <option>Modification d'Equipage</option>
+        </select>
+
+        <button class="mcpn-button" onclick="initialiserMS()">
+            Initialiser
+        </button>
+    </div>
+
+    <div id="ms-formulaire" class="service-hours-panel" style="display:none;">
+        <h3>Détails</h3>
+
+        <p><strong>Date et heure :</strong> <span id="ms-recap-date"></span></p>
+        <p><strong>Motif :</strong> <span id="ms-recap-motif"></span></p>
+
+        <label>Contenu</label>
+        <textarea id="ms-details" class="ge-textarea"></textarea>
+
+        <button class="mcpn-button" id="btn-finaliser-ms" onclick="finaliserMS()">
+            <span class="btn-text">Finaliser</span>
+            <span class="spinner" style="display:none;"></span>
+        </button>
+    </div>
+
+</section>
+
+<section id="statistiques" class="mcpn-panel mcpn-wide-panel" style="display:none;">
+
+    <div class="mcpn-home-screen">
+        <img src="mcpn-logo.png" class="mcpn-home-logo">
+        <h1>STATISTIQUES OPÉRATIONNELLES</h1>
+        <p>Analyse hebdomadaire de l'activité MCPN</p>
+    </div>
+
+    <div class="stats-grid">
+
+        <div class="stat-card">
+            <h3>Répartition globale de l'activité</h3>
+            <canvas id="chart-activite"></canvas>
+        </div>
+
+        <div class="stat-card">
+            <h3>Services par brigade</h3>
+            <canvas id="chart-brigades"></canvas>
+        </div>
+
+        <div class="stat-card">
+            <h3>GE par motif d'intervention</h3>
+            <canvas id="chart-ge-motifs"></canvas>
+        </div>
+
+    </div>
+
+</section>
 
     </main>
 
 </div>
 
+<div id="activity-modal" class="activity-modal" style="display:none;">
+
+    <div class="activity-modal-box">
+
+        <h3>Ajouter une activité</h3>
+
+        <label>Date et heure de début</label>
+        <input id="activity-start" type="datetime-local" step="300">
+
+        <label>Date et heure de fin</label>
+        <input id="activity-end" type="datetime-local" step="300">
+
+        <label>Activité</label>
+        <select id="activity-type">
+            <option value="">Sélectionner une activité</option>
+            <option>7031 - Surveillance des gardes à vue</option>
+            <option>7046 - Chef de Poste</option>
+            <option>7036 - Intervention de police (sauf AVP)</option>
+        </select>
+
+        <div class="modal-actions">
+            <button class="mcpn-button" onclick="validerActivite()">Valider</button>
+            <button class="cancel-button" onclick="fermerBlocActivite()">Annuler</button>
+        </div>
+
+    </div>
+
+</div>
+
+<div id="equipage-activity-modal" class="activity-modal" style="display:none;">
+    <div class="activity-modal-box">
+
+        <h3>Ajouter une activité</h3>
+
+        <label>Début de l'activité</label>
+        <input id="equipage-activity-start" type="datetime-local" step="300">
+
+        <label>Fin de l'activité</label>
+        <input id="equipage-activity-end" type="datetime-local" step="300">
+
+        <label>Type d'activité</label>
+        <select id="equipage-activity-type">
+            <option value="">Sélectionner une activité</option>
+            <option>7031 - Surveillance des GAV</option>
+            <option>7038 - Intervention de Police (sauf AVP)</option>
+            <option>7046 - Chef de Poste</option>
+            <option>7047 - Patrouille Générale</option>
+            <option>7052 - Assistance à personne</option>
+        </select>
+
+        <div class="modal-actions">
+            <button class="mcpn-button" onclick="validerAjoutActiviteEquipage()">Valider</button>
+            <button class="cancel-button" onclick="fermerAjoutActiviteEquipage()">Annuler</button>
+        </div>
+
+    </div>
+</div>
+
+<footer class="legal-footer">
+    CHEOPS-NG ainsi que tout ce qu'il contient est un projet fictif non officiel réalisé dans un cadre de simulation et de roleplay vidéo-ludique.
+    Ce site n'est affilié ni au Ministère de l’Intérieur, ni à la Police Nationale française,
+    ni à une quelconque administration publique réelle.
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="script.js"></script>
 </body>
 </html>

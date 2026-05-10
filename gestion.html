@@ -42,6 +42,28 @@
 
     </div>
 
+    <footer class="legal-footer">
+    CHEOPS-NG ainsi que tout ce qu'il contient est un projet fictif non officiel réalisé dans un cadre de simulation et de roleplay vidéo-ludique.
+    Ce site n'est affilié ni au Ministère de l’Intérieur, ni à la Police Nationale française,
+    ni à une quelconque administration publique réelle.
+</footer>
     <script src="script.js"></script>
+    <div id="popupResetMdp" class="popup-reset hidden">
+    <div class="popup-reset-content">
+        <h3>Réinitialisation du mot de passe</h3>
+
+        <p id="resetMdpMatricule"></p>
+
+        <div id="zoneCleTemporaire" class="hidden">
+            <p>Clé temporaire générée :</p>
+            <strong id="cleTemporaireAffichee"></strong>
+            <p>À transmettre uniquement à l’agent concerné.</p>
+            <p>À sa prochaine connexion, il devra créer un nouveau mot de passe.</p>
+        </div>
+
+        <button onclick="genererCleTemporaire()">Générer clé temporaire</button>
+        <button onclick="fermerResetMdp()">Retour</button>
+    </div>
+</div>
 </body>
 </html>
