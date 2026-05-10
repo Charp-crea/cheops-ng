@@ -77,7 +77,7 @@ function verifierMotDePasse() {
 
     const motDePasseExistant = localStorage.getItem("mdp_" + matriculeActuel);
 
-    if (motDePasseExistant && verifierCleTemporaire(matriculeActuel, password)) {
+   if (verifierCleTemporaire(matriculeActuel, password)) {
         localStorage.removeItem("mdp_" + matriculeActuel);
 
         document.getElementById("auth-title").textContent = "Création d'un nouveau mot de passe";
@@ -246,11 +246,11 @@ function afficherAgents() {
 
     Object.keys(agents).forEach(matricule => {
         const agent = agents[matricule];
-        const mdpExiste = localStorage.getItem("mdp_" + matricule);
-
-        const statutMdp = mdpExiste
-            ? `<span class="mdp-statut" onclick="ouvrirResetMdp('${matricule}')">Mot de passe créé</span>`
-            : `<span class="mdp-non-cree">Aucun mot de passe créé</span>`;
+        const statutMdp = `
+            <span class="mdp-statut" onclick="ouvrirResetMdp('${matricule}')">
+                Générer une clé temporaire
+            </span>
+        `;
 
         container.innerHTML += `
             <div class="agent-row">
