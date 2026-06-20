@@ -1,17 +1,4 @@
 let agents = JSON.parse(localStorage.getItem("agentsCheops")) || {
-    "7148946": {
-    grade: "Commissaire Divisionnaire",
-    nom: "DE VILLIERS",
-    prenom: "Alain",
-
-    niveau: 2,
-    fonction: "Gestionnaire",
-
-    qualificationJudiciaire: "OPJ",
-
-    idutilisateurmcpn: "1124547"
-},
-
     "7148947": {
     grade: "Commissaire Divisionnaire",
     nom: "DU PONT L'ABBEE",
@@ -23,6 +10,19 @@ let agents = JSON.parse(localStorage.getItem("agentsCheops")) || {
     qualificationJudiciaire: "OPJ",
 
     idutilisateurmcpn: "1178531"
+},
+
+"7148946": {
+    grade: "Commissaire Divisionnaire",
+    nom: "DE VILLIERS",
+    prenom: "Alain",
+
+    niveau: 2,
+    fonction: "Gestionnaire",
+
+    qualificationJudiciaire: "OPJ",
+
+    idutilisateurmcpn: "1124547"
 },
 };
 
@@ -322,10 +322,6 @@ function voirDetailsAgent(matricule) {
         "Niveau habilitation CHEOPS : Niveau " + agent.niveau + " - " + agent.fonction + "\n" +
         "ID Utilisateur MCPN : " + (agent.idutilisateurmcpn || "Non attribué")
     );
-}
-
-if (window.location.pathname.includes("mcpn.html")) {
-    chargerMCPN();
 }
 
 function chargerMCPN() {
@@ -628,24 +624,6 @@ const absents = service.absents.map(matricule => {
     `;
 }
 
-function afficherGestionEvenement() {
-    document.getElementById("mcpn-home").style.display = "none";
-    document.getElementById("prise-service-step1").style.display = "none";
-    document.getElementById("prise-service-step2").style.display = "none";
-    document.getElementById("gestion-activites").style.display = "none";
-    document.getElementById("gestion-evenement").style.display = "block";
-    document.getElementById("details-service").style.display = "none";
-    document.getElementById("details-ge").style.display = "none";
-    document.getElementById("mention-service").style.display = "none";
-    document.getElementById("details-ms").style.display = "none";
-    document.getElementById("statistiques").style.display = "none";
-
-    setActiveSidebarButton(3);
-    chargerEquipagesGE();
-    afficherListeGE();
-    resetFormulaireGE();
-}
-
 function afficherGestionActivites() {
     document.getElementById("mcpn-home").style.display = "none";
     document.getElementById("prise-service-step1").style.display = "none";
@@ -733,27 +711,6 @@ function consulterGE(index) {
         </div>
         </div>
     `;
-}
-
-function afficherMentionService() {
-    document.getElementById("mcpn-home").style.display = "none";
-    document.getElementById("prise-service-step1").style.display = "none";
-    document.getElementById("prise-service-step2").style.display = "none";
-    document.getElementById("gestion-activites").style.display = "none";
-    document.getElementById("gestion-evenement").style.display = "none";
-    document.getElementById("details-service").style.display = "none";
-    document.getElementById("details-ms").style.display = "none";
-    document.getElementById("statistiques").style.display = "none";
-
-    const detailsGE = document.getElementById("details-ge");
-    if (detailsGE) detailsGE.style.display = "none";
-
-    document.getElementById("mention-service").style.display = "block";
-
-    setActiveSidebarButton(4);
-
-    resetFormulaireMS();
-    afficherListeMS();
 }
 
 function consulterMS(index) {
@@ -944,16 +901,6 @@ function resetFormulaireMS() {
     document.getElementById("ms-date").value = "";
     document.getElementById("ms-motif").value = "";
     document.getElementById("ms-details").value = "";
-}
-
-function setActiveSidebarButton(index) {
-    const buttons = document.querySelectorAll(".side-btn");
-
-    buttons.forEach(btn => btn.classList.remove("active"));
-
-    if (buttons[index]) {
-        buttons[index].classList.add("active");
-    }
 }
 
 function sauvegarderEffectifsMCPN() {
@@ -1432,171 +1379,8 @@ function consulterDetailsEquipage(index) {
 
 let equipageSelectionneIndex = null;
 
-function consulterActiviteEquipage(index) {
-    equipageSelectionneIndex = index;
-
-    const equipages = JSON.parse(sessionStorage.getItem("equipagesMCPN")) || [];
-    const eq = equipages[index];
-
-    if (!eq) return;
-
-    if (!eq.activites) {
-        eq.activites = [];
-        sessionStorage.setItem("equipagesMCPN", JSON.stringify(equipages));
-    }
-
-    document.getElementById("activite-equipage-panel").style.display = "block";
-    document.getElementById("activite-equipage-title").textContent =
-        `Activité de l’équipage ${eq.indicatif}`;
-
-    afficherTimelineEquipage();
-}
-
-function afficherTimelineEquipage() {
-    const container = document.getElementById("activite-timeline");
-    const equipages = JSON.parse(sessionStorage.getItem("equipagesMCPN")) || [];
-    const eq = equipages[equipageSelectionneIndex];
-
-    if (!container || !eq) return;
-
-    const debutService = new Date(eq.debut);
-    const finService = new Date(eq.fin);
-
-    const activites = (eq.activites || []).sort((a, b) => new Date(a.debut) - new Date(b.debut));
-
-    let html = "";
-    let curseur = new Date(debutService);
-
-    activites.forEach((act, actIndex) => {
-        const debutAct = new Date(act.debut);
-        const finAct = new Date(act.fin);
-
-        if (curseur < debutAct) {
-            html += blocVideActivite(curseur, debutAct);
-        }
-
-        html += `
-            <div class="activity-vertical-block">
-                <strong>${act.type}</strong><br>
-                ${formatDateHeure(act.debut)} → ${formatDateHeure(act.fin)}
-            </div>
-        `;
-
-        curseur = finAct;
-    });
-
-    if (curseur < finService) {
-        html += blocVideActivite(curseur, finService);
-    }
-
-    container.innerHTML = html;
-}
-
-function blocVideActivite(debut, fin) {
-    return `
-        <div class="activity-empty-block">
-            <span>${formatDateHeure(debut)} → ${formatDateHeure(fin)}</span>
-            <button class="activity-add" onclick="ouvrirAjoutActiviteEquipage('${debut.toISOString()}', '${fin.toISOString()}')">
-                +
-            </button>
-        </div>
-    `;
-}
-
 let activiteDebutDisponible = null;
 let activiteFinDisponible = null;
-
-function ouvrirAjoutActiviteEquipage(debutDefaut, finDefaut) {
-    activiteDebutDisponible = debutDefaut;
-    activiteFinDisponible = finDefaut;
-
-    const start = document.getElementById("equipage-activity-start");
-    const end = document.getElementById("equipage-activity-end");
-    const type = document.getElementById("equipage-activity-type");
-
-    start.value = debutDefaut.slice(0, 16);
-    end.value = finDefaut.slice(0, 16);
-
-    start.min = debutDefaut.slice(0, 16);
-    start.max = finDefaut.slice(0, 16);
-
-    end.min = debutDefaut.slice(0, 16);
-    end.max = finDefaut.slice(0, 16);
-
-    type.value = "";
-
-    document.getElementById("equipage-activity-modal").style.display = "flex";
-}
-
-function fermerAjoutActiviteEquipage() {
-    document.getElementById("equipage-activity-modal").style.display = "none";
-}
-
-function validerAjoutActiviteEquipage() {
-    const debut = document.getElementById("equipage-activity-start").value;
-    const fin = document.getElementById("equipage-activity-end").value;
-    const type = document.getElementById("equipage-activity-type").value;
-
-    if (!debut || !fin || !type) {
-        alert("Veuillez remplir tous les champs.");
-        return;
-    }
-
-    ajouterActiviteEquipage(debut, fin, type);
-
-    fermerAjoutActiviteEquipage();
-}
-
-function ajouterActiviteEquipage(debut, fin, type) {
-    const equipages = JSON.parse(sessionStorage.getItem("equipagesMCPN")) || [];
-    const eq = equipages[equipageSelectionneIndex];
-
-    if (!eq) return;
-
-    const debutDate = new Date(debut);
-    const finDate = new Date(fin);
-    const debutService = new Date(eq.debut);
-    const finService = new Date(eq.fin);
-
-    if (debutDate.getMinutes() % 5 !== 0 || finDate.getMinutes() % 5 !== 0) {
-        alert("Les horaires doivent être par créneaux de 5 minutes.");
-        return;
-    }
-
-    if (finDate <= debutDate) {
-        alert("La fin doit être postérieure au début.");
-        return;
-    }
-
-    if (debutDate < debutService || finDate > finService) {
-        alert("L'activité doit être comprise dans les horaires de l’équipage.");
-        return;
-    }
-
-    eq.activites = eq.activites || [];
-
-    const chevauchement = eq.activites.some(act => {
-        const aDebut = new Date(act.debut);
-        const aFin = new Date(act.fin);
-
-        return debutDate < aFin && finDate > aDebut;
-    });
-
-    if (chevauchement) {
-        alert("Impossible : cette activité chevauche une activité existante.");
-        return;
-    }
-
-    eq.activites.push({
-        debut,
-        fin,
-        type
-    });
-
-    sessionStorage.setItem("equipagesMCPN", JSON.stringify(equipages));
-
-    afficherTimelineEquipage();
-}
 
 function remplirEncadrementService() {
     const autoriteSelect = document.getElementById("autorite-permanence");
@@ -1776,69 +1560,6 @@ service.presents.forEach(matricule => {
         </div>
     `;
 });
-}
-
-function toggleRoleEquipage(checkbox) {
-    const bloc = checkbox.closest(".equipage-agent-check");
-    const select = bloc.querySelector(".role-equipage");
-
-    if (checkbox.checked) {
-        select.style.display = "block";
-    } else {
-        select.style.display = "none";
-        select.value = "";
-    }
-}  
-
-function chargerEquipagesGE() {
-    const select = document.getElementById("ge-equipage");
-    const selectSupp = document.getElementById("ge-equipage-supp");
-
-    const equipages = JSON.parse(sessionStorage.getItem("equipagesMCPN")) || [];
-
-    select.innerHTML = `<option value="">Sélectionner un équipage</option>`;
-    selectSupp.innerHTML = `<option value="">Sélectionner un équipage</option>`;
-
-    equipages.forEach((eq, index) => {
-        const label = `${eq.indicatif} - ${eq.unite} - ${eq.vehicule}`;
-        select.innerHTML += `<option value="${index}">${label}</option>`;
-        selectSupp.innerHTML += `<option value="${index}">${label}</option>`;
-    });
-}
-
-function initialiserGE() {
-    const equipageIndex = document.getElementById("ge-equipage").value;
-    const connaissance = document.getElementById("ge-connaissance").value;
-
-    const equipages = JSON.parse(sessionStorage.getItem("equipagesMCPN")) || [];
-
-    if (equipageIndex === "" || !connaissance) {
-        alert("Veuillez sélectionner un équipage et renseigner la connaissance des faits.");
-        return;
-    }
-
-    const eq = equipages[equipageIndex];
-
-    document.getElementById("ge-initialisation").style.display = "none";
-    document.getElementById("ge-formulaire").style.display = "block";
-
-    document.getElementById("ge-recap-connaissance").textContent = formatDateHeure(connaissance);
-    document.getElementById("ge-recap-equipage").textContent = `${eq.indicatif} - ${eq.unite} - ${eq.vehicule}`;
-}
-
-function ajouterEquipageGE() {
-    const index = document.getElementById("ge-equipage-supp").value;
-    const equipages = JSON.parse(sessionStorage.getItem("equipagesMCPN")) || [];
-
-    if (index === "" || !equipages[index]) return;
-
-    const eq = equipages[index];
-
-    document.getElementById("ge-equipages-intervenants").innerHTML += `
-        <div class="service-card">
-            ${eq.indicatif} - ${eq.unite} - ${eq.vehicule}
-        </div>
-    `;
 }
 
 function ajouterPersonneGE() {
@@ -2169,13 +1890,6 @@ function resetFormulaireGE() {
     if (intervenants) intervenants.innerHTML = "";
 }
 
-function deconnexionMCPN() {
-    sessionStorage.removeItem("mcpnConnecte");
-    sessionStorage.removeItem("mcpnUtilisateur");
-
-    window.location.href = "accueil.html";
-}
-
 function cloturerGE(index) {
     const matriculeConnecte = sessionStorage.getItem("matriculeConnecte");
     const agentConnecte = agents[matriculeConnecte];
@@ -2201,28 +1915,6 @@ function cloturerGE(index) {
 let chartActivite = null;
 let chartBrigades = null;
 let chartGEMotifs = null;
-
-function afficherStatistiques() {
-    document.getElementById("mcpn-home").style.display = "none";
-    document.getElementById("prise-service-step1").style.display = "none";
-    document.getElementById("prise-service-step2").style.display = "none";
-    document.getElementById("gestion-activites").style.display = "none";
-    document.getElementById("gestion-evenement").style.display = "none";
-    document.getElementById("mention-service").style.display = "none";
-    document.getElementById("details-service").style.display = "none";
-
-    const detailsGE = document.getElementById("details-ge");
-    if (detailsGE) detailsGE.style.display = "none";
-
-    const detailsMS = document.getElementById("details-ms");
-    if (detailsMS) detailsMS.style.display = "none";
-
-    document.getElementById("statistiques").style.display = "block";
-
-    setActiveSidebarButton(5);
-
-    genererStatistiques();
-}
 
 function estCetteSemaine(dateValue) {
     const date = new Date(dateValue);
@@ -2389,4 +2081,76 @@ function creerCleTemporaire(matricule) {
 
 function verifierCleTemporaire(matricule, cleSaisie) {
     return cleSaisie === creerCleTemporaire(matricule);
+}
+
+function chargerMCPN() {
+    const matriculeConnecte = sessionStorage.getItem("matriculeConnecte");
+
+    if (!matriculeConnecte || !agents[matriculeConnecte]) {
+        window.location.href = "index.html";
+        return;
+    }
+
+    if (sessionStorage.getItem("mcpnConnecte") !== "true") {
+        window.location.href = "mcpn-login.html";
+        return;
+    }
+
+    const utilisateurMCPN = sessionStorage.getItem("mcpnUtilisateur");
+
+    if (utilisateurMCPN && agents[utilisateurMCPN]) {
+        const agentMCPN = agents[utilisateurMCPN];
+        const box = document.getElementById("mcpn-connected-user");
+
+        if (box) {
+            box.textContent =
+                `Connecté en tant que : ${agentMCPN.idutilisateurmcpn} - ${agentMCPN.grade} ${agentMCPN.nom} ${agentMCPN.prenom} ${agentMCPN.qualificationJudiciaire}`;
+        }
+    }
+
+    nettoyerEquipagesExpires();
+}
+
+function obtenirEquipagesClasses() {
+    const equipages = nettoyerEquipagesExpires();
+    const maintenant = new Date();
+
+    const aVenir = [];
+    const enCours = [];
+    const terminesVisibles = [];
+
+    equipages.forEach((eq, index) => {
+        const debut = new Date(eq.debut);
+        const fin = new Date(eq.fin);
+
+        if (debut > maintenant) {
+            aVenir.push({ eq, index });
+        } else if (fin >= maintenant) {
+            enCours.push({ eq, index });
+        } else {
+            terminesVisibles.push({ eq, index });
+        }
+    });
+
+    return { aVenir, enCours, terminesVisibles };
+}
+
+function chargerEquipagesGE() {
+    const select = document.getElementById("ge-equipage");
+    const selectSupp = document.getElementById("ge-equipage-supp");
+
+    if (!select || !selectSupp) return;
+
+    const { enCours } = obtenirEquipagesClasses();
+
+    select.innerHTML = `<option value="">Sélectionner un équipage</option>`;
+    selectSupp.innerHTML = `<option value="">Sélectionner un équipage</option>`;
+
+    enCours.forEach(item => {
+        const eq = item.eq;
+        const label = `${eq.indicatif} - ${eq.unite} - ${eq.vehicule}`;
+
+        select.innerHTML += `<option value="${item.index}">${label}</option>`;
+        selectSupp.innerHTML += `<option value="${item.index}">${label}</option>`;
+    });
 }

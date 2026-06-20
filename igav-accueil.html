@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>iGAV - MPL</title>
+<style>
+body{
+    margin:0;
+    font-family:Arial,Helvetica,sans-serif;
+    background:#eef0f2;
+    color:#333;
+}
+
+.igav-top{
+    height:42px;
+    background:#1f4f93;
+    color:white;
+    display:flex;
+    align-items:center;
+    padding:0 16px;
+    gap:25px;
+}
+
+.logo{
+    font-size:24px;
+    font-weight:bold;
+}
+
+.top-right{
+    margin-left:auto;
+    display:flex;
+    gap:25px;
+    font-size:14px;
+}
+
+.layout{
+    display:flex;
+    height:calc(100vh - 42px);
+}
+
+.sidebar{
+    width:245px;
+    background:#e5e5df;
+    border-right:1px solid #c7c7c7;
+    padding:12px;
+    overflow:auto;
+}
+
+.side-title{
+    background:#d5d5cd;
+    padding:10px;
+    font-weight:bold;
+}
+
+.side-btn{
+    display:block;
+    width:100%;
+    margin:8px 0;
+    padding:8px;
+    background:#eee;
+    border:1px solid #bbb;
+    text-align:left;
+    cursor:default;
+}
+
+.side-section{
+    margin-top:18px;
+    font-weight:bold;
+}
+
+.side-section-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+}
+
+.side-link{
+    font-size:12px;
+    font-weight:normal;
+    cursor:pointer;
+    color:#333;
+    text-decoration:none;
+}
+
+.side-link:hover{
+    text-decoration:underline;
+}
+
+.side-item{
+    font-size:14px;
+    margin:8px 0;
+    padding-left:8px;
+}
+
+.side-mpl-card{
+    position:relative;
+    background:#f1f1ea;
+    border:1px solid #c8c8c0;
+    margin:7px 0;
+    padding:9px 45px 9px 8px;
+    cursor:pointer;
+    font-size:14px;
+}
+
+.side-mpl-card:hover{
+    background:#d7e8f0;
+}
+
+.side-mpl-card.active{
+    background:#2d74a8;
+    color:white;
+}
+
+.side-mpl-name{
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+.side-mpl-card .badge{
+    position:absolute;
+    right:8px;
+    top:8px;
+}
+
+.badge{
+    float:right;
+    background:#5aa6b6;
+    color:white;
+    padding:2px 6px;
+    border-radius:4px;
+    font-size:11px;
+}
+
+.main{
+    flex:1;
+    padding:18px;
+    overflow:auto;
+}
+
+.breadcrumb{
+    background:#ddd;
+    border:1px solid #ccc;
+    padding:8px;
+    margin-bottom:20px;
+}
+
+h1{
+    font-size:25px;
+    margin-bottom:18px;
+}
+
+.actions{
+    display:flex;
+    gap:220px;
+    margin-bottom:20px;
+}
+
+.btn{
+    padding:7px 12px;
+    border:1px solid #aaa;
+    background:#eee;
+    cursor:pointer;
+    border-radius:3px;
+}
+
+.btn:hover{
+    background:#e2e2e2;
+}
+
+.table-tools{
+    display:flex;
+    justify-content:space-between;
+    margin:15px 0;
+}
+
+input,select{
+    padding:6px;
+    border:1px solid #aaa;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    background:white;
+    font-size:13px;
+}
+
+th{
+    background:#f2f2f2;
+    border:1px solid #ccc;
+    padding:8px;
+    text-align:left;
+}
+
+td{
+    border:1px solid #ddd;
+    padding:8px;
+    vertical-align:top;
+}
+
+.tag{
+    background:#58b8c4;
+    color:white;
+    padding:3px 6px;
+    border-radius:3px;
+    font-weight:bold;
+    font-size:11px;
+}
+
+.gender-icon{
+    font-weight:bold;
+    color:#225d99;
+    margin-left:4px;
+}
+
+.minor-icon{
+    margin-left:4px;
+}
+
+.right-tools{
+    position:fixed;
+    right:8px;
+    top:270px;
+    background:#65798e;
+    border-radius:4px;
+    overflow:hidden;
+}
+
+.tool{
+    color:white;
+    padding:13px;
+    border-bottom:1px solid #7f90a0;
+    text-align:center;
+}
+
+.small{
+    font-size:12px;
+    color:#666;
+}
+
+/* MODAL MPL MODERNISÉE */
+.modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(20,20,20,.45);
+    align-items:center;
+    justify-content:center;
+    z-index:999;
+}
+
+.modal-box{
+    background:#ffffff;
+    width:760px;
+    max-height:88vh;
+    overflow:auto;
+    border-radius:10px;
+    border:1px solid #cfcfcf;
+    box-shadow:0 12px 35px rgba(0,0,0,.25);
+    padding:0;
+}
+
+.modal-box h2{
+    margin:0;
+    padding:18px 24px;
+    background:#1f4f93;
+    color:white;
+    font-size:20px;
+    font-weight:600;
+}
+
+.form-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px 22px;
+    padding:24px;
+}
+
+.form-field{
+    display:flex;
+    flex-direction:column;
+}
+
+.form-field.full{
+    grid-column:1 / 3;
+}
+
+.form-field label{
+    font-size:13px;
+    font-weight:bold;
+    margin-bottom:6px;
+    color:#333;
+}
+
+.form-field input,
+.form-field select{
+    height:36px;
+    border:1px solid #aaa;
+    border-radius:5px;
+    padding:6px 9px;
+    font-size:14px;
+    background:#fafafa;
+    box-sizing:border-box;
+}
+
+.form-field input:focus,
+.form-field select:focus{
+    outline:none;
+    border-color:#1f4f93;
+    background:white;
+}
+
+.checkbox-row{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding-top:25px;
+}
+
+.checkbox-row input{
+    width:16px;
+    height:16px;
+}
+
+.checkbox-row label{
+    margin:0;
+    font-weight:bold;
+}
+
+.modal-actions{
+    padding:16px 24px;
+    background:#f1f1f1;
+    border-top:1px solid #d0d0d0;
+    display:flex;
+    justify-content:flex-end;
+    gap:10px;
+}
+
+/* FICHE MPL */
+.fiche-box{
+    background:#f4f4f4;
+    border:1px solid #c8c8c8;
+    padding:22px;
+    margin-top:20px;
+}
+
+.fiche-header{
+    display:flex;
+    justify-content:space-between;
+    gap:20px;
+    background:#f8f8f8;
+    border:1px solid #cfcfcf;
+    padding:18px;
+}
+
+.fiche-location{
+    min-width:300px;
+    background:#eeeeee;
+    border:1px solid #c8c8c8;
+    padding:12px;
+    font-size:13px;
+}
+
+.fiche-section{
+    background:#f7f7f7;
+    border:1px solid #d0d0d0;
+    padding:15px;
+    margin-top:14px;
+}
+
+.fiche-actions{
+    margin-top:25px;
+    display:flex;
+    gap:10px;
+}
+
+.fiche-actions-grid{
+    display:flex;
+    gap:18px;
+    margin:25px 0;
+    flex-wrap:wrap;
+}
+
+.round-action{
+    width:92px;
+    height:82px;
+    border-radius:50%;
+    border:none;
+    cursor:pointer;
+    font-size:12px;
+    color:#333;
+    box-shadow:0 1px 4px rgba(0,0,0,.2);
+}
+
+.round-action.green{
+    background:#69b96d;
+    color:white;
+}
+
+.round-action.gray{
+    background:#e2e2e2;
+}
+
+.round-action.orange{
+    background:#d9a44d;
+    color:white;
+}
+
+.round-action.red{
+    background:#b95b5b;
+    color:white;
+}
+
+.timeline-mpl{
+    border-left:2px dashed #9fb6c9;
+    margin-left:20px;
+    padding-left:20px;
+}
+
+.timeline-row{
+    margin:12px 0;
+    padding:8px;
+    background:white;
+    border:1px solid #ddd;
+}
+
+.timeline-row span{
+    color:#5aa6b6;
+    font-weight:bold;
+    margin-right:20px;
+}
+</style>
+</head>
+<body>
+
+<header class="igav-top">
+    <div class="top-right">
+    <span id="igav-user">Chargement utilisateur...</span>
+    <span>⚙ Administration</span>
+    <span>☰ Consultations</span>
+    <span>? Aide</span>
+</div>
+</header>
+
+<div class="layout">
+    <aside class="sidebar">
+        <div class="side-title">⌂ CPN VANNES</div>
+
+        <button class="side-btn" type="button">🔎 Rechercher des MPL</button>
+        <button class="side-btn" type="button">⇩ Exporter des MPL</button>
+
+        <div class="side-section">⌛ En attente</div>
+        <div class="side-item">Aucune</div>
+
+        <div class="side-section side-section-row">
+            <span>⚙ En cours</span>
+            <span class="side-link" onclick="filtrerVue('enCours')">Voir</span>
+        </div>
+        <div id="side-en-cours"></div>
+
+        <div class="side-section side-section-row">
+            <span>⌛ Mesures terminées</span>
+            <span class="side-link" onclick="filtrerVue('terminees')">Voir</span>
+        </div>
+        <div id="side-terminees"></div>
+
+        <div class="side-section side-section-row">
+            <span>▣ Mesures archivées</span>
+            <span class="side-link" onclick="filtrerVue('archivees')">Voir</span>
+        </div>
+        <div id="side-archivees"></div>
+    </aside>
+
+    <main class="main">
+        <div class="breadcrumb">MPL</div>
+
+        <h1>Mesures de Privation de Liberté ( CPN VANNES ) <span id="count-mpl"></span></h1>
+
+        <div class="actions">
+            <button class="btn" onclick="ouvrirCreationMPL()">+ Créer une MPL</button>
+            <button class="btn">▣ Gestion des cellules</button>
+        </div>
+
+        <div class="table-tools">
+            <div>Afficher <select><option>10</option><option>25</option><option>50</option></select> éléments</div>
+            <div>Rechercher : <input id="search" oninput="afficherMPL()" placeholder=""></div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Type de mesure</th>
+                    <th>Date de début</th>
+                    <th>Fin</th>
+                    <th>Localisation</th>
+                    <th>Individu</th>
+                    <th>Droits</th>
+                    <th>Procédure & Infractions</th>
+                    <th>Enquêteurs</th>
+                </tr>
+            </thead>
+            <tbody id="mpl-table"></tbody>
+        </table>
+
+        <section id="fiche-mpl" style="display:none;"></section>
+    </main>
+</div>
+
+<div class="right-tools">
+    <div class="tool">🩺</div>
+    <div class="tool">📷</div>
+    <div class="tool">🍴</div>
+    <div class="tool">👁</div>
+</div>
+
+<div id="modal-mpl" class="modal">
+    <div class="modal-box">
+        <h2>Création d’une mesure de privation de liberté</h2>
+
+        <div class="form-grid">
+
+            <div class="form-field">
+                <label>Type de mesure</label>
+                <select id="mpl-type">
+                    <option>GAV</option>
+                    <option>RETMIN</option>
+                </select>
+            </div>
+
+            <div class="form-field">
+                <label>Sexe</label>
+                <select id="mpl-sexe">
+                    <option>Masculin</option>
+                    <option>Féminin</option>
+                </select>
+            </div>
+
+            <div class="form-field">
+                <label>Individu</label>
+                <input id="mpl-individu" placeholder="NOM Prénom">
+            </div>
+
+            <div class="form-field">
+                <label>Date de naissance</label>
+                <input id="mpl-naissance" type="date">
+            </div>
+
+            <div class="checkbox-row">
+                <input id="mpl-mineur" type="checkbox">
+                <label for="mpl-mineur">Mineur</label>
+            </div>
+
+            <div class="form-field">
+                <label>Localisation</label>
+                <input id="mpl-localisation" placeholder="HP Vannes - Cellule 3">
+            </div>
+
+            <div class="form-field">
+                <label>Date / heure début</label>
+                <input id="mpl-debut" type="datetime-local">
+            </div>
+
+            <div class="form-field">
+                <label>Date / heure fin prévue</label>
+                <input id="mpl-fin" type="datetime-local" readonly>
+            </div>
+
+            <div class="form-field">
+                <label>Procédure</label>
+                <input id="mpl-procedure" placeholder="2026/17430">
+            </div>
+
+            <div class="form-field">
+                <label>Infraction</label>
+                <input id="mpl-infraction" placeholder="Vol simple">
+            </div>
+
+            <div class="form-field full">
+                <label>Enquêteur</label>
+                <input id="mpl-enqueteur" placeholder="Nom, RIO, téléphone ou service">
+            </div>
+
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn" onclick="fermerCreationMPL()">Annuler</button>
+            <button class="btn" onclick="creerMPL()">Créer la MPL</button>
+        </div>
+    </div>
+</div>
+
+<script>
+let vueMPL = "enCours";
+
+function chargerUtilisateurIGAV(){
+    const matricule =
+        sessionStorage.getItem("matriculeConnecte") ||
+        sessionStorage.getItem("mcpnUtilisateur") ||
+        localStorage.getItem("matriculeConnecte");
+
+    const userBox = document.getElementById("igav-user");
+
+    if (!userBox) return;
+
+    if (!matricule) {
+        userBox.textContent = "Utilisateur non identifié";
+        return;
+    }
+
+    const agent = agents?.[matricule];
+
+    if (!agent) {
+        userBox.textContent = `${matricule} - UTILISATEUR INCONNU`;
+        return;
+    }
+
+    userBox.textContent =
+        `${agent.nom} ${agent.prenom} ${agent.grade} ( GESTIONNAIRE CELLULE )`;
+}
+
+let mpl = JSON.parse(localStorage.getItem("igavMPL")) || [];
+
+function sauvegarderMPL(){
+    localStorage.setItem("igavMPL", JSON.stringify(mpl));
+}
+
+function purgerMPL(){
+    const now = new Date();
+
+    mpl = mpl.filter(m => {
+        if (m.statut === "terminee" && m.dateTerminee) {
+            return now - new Date(m.dateTerminee) < 10 * 60 * 1000;
+        }
+
+        if (m.statut === "archivee" && m.dateArchivee) {
+            return now - new Date(m.dateArchivee) < 30 * 24 * 60 * 60 * 1000;
+        }
+
+        return true;
+    });
+
+    sauvegarderMPL();
+}
+
+function verifierStatutsAutomatiques(){
+    const now = new Date();
+
+    mpl.forEach(m => {
+        if (m.statut === "enCours" && new Date(m.fin) < now) {
+            m.statut = "terminee";
+            m.dateTerminee = new Date().toISOString();
+
+            if (!m.historique) m.historique = [];
+            m.historique.push({
+                date: new Date().toISOString(),
+                type: "Mesure automatiquement terminée"
+            });
+        }
+    });
+
+    sauvegarderMPL();
+}
+
+function filtrerVue(vue){
+    vueMPL = vue;
+    retourListeMPL(false);
+    afficherMPL();
+    afficherSidebar();
+}
+
+function getListeSelonVue(){
+    verifierStatutsAutomatiques();
+    purgerMPL();
+
+    return mpl
+        .map((m, indexOriginal) => ({ m, indexOriginal }))
+        .filter(item => {
+            if (vueMPL === "terminees") return item.m.statut === "terminee";
+            if (vueMPL === "archivees") return item.m.statut === "archivee";
+            return item.m.statut === "enCours";
+        });
+}
+
+function getListeParStatut(statut){
+    verifierStatutsAutomatiques();
+    purgerMPL();
+
+    return mpl
+        .map((m, indexOriginal) => ({ m, indexOriginal }))
+        .filter(item => item.m.statut === statut);
+}
+
+function afficherMPL(){
+    const tbody = document.getElementById("mpl-table");
+    const search = document.getElementById("search").value.toLowerCase();
+
+    let liste = getListeSelonVue();
+
+    liste = liste.filter(item =>
+        JSON.stringify(item.m).toLowerCase().includes(search)
+    );
+
+    const titreVue = vueMPL === "terminees"
+        ? "mesures terminées"
+        : vueMPL === "archivees"
+            ? "mesures archivées"
+            : "mesures en cours";
+
+    document.getElementById("count-mpl").textContent = `(${liste.length} ${titreVue})`;
+
+    tbody.innerHTML = "";
+
+    liste.forEach(item => {
+        const m = item.m;
+        const index = item.indexOriginal;
+
+        const nom = m.nomPrenom || "Individu non renseigné";
+        const naissance = m.naissance ? formatNaissance(m.naissance) : "";
+        const sexeLogo = m.sexe === "Masculin" ? "♂" : m.sexe === "Féminin" ? "♀" : "";
+        const mineurLogo = m.mineur ? " 🧒" : "";
+
+        tbody.innerHTML += `
+            <tr ondblclick="ouvrirFicheMPL(${index})" style="cursor:pointer;">
+                <td><span class="tag">${m.type}<br>${m.numero}</span></td>
+                <td>${formatDate(m.debut)}<br>⏱ ${dureeTexte(m)}</td>
+                <td>${formatDate(m.fin)}</td>
+                <td>CPN VANNES<br><span class="small">${m.localisationTexte || ""}</span></td>
+                <td>
+                    ${nom} <span class="gender-icon">${sexeLogo}</span><span class="minor-icon">${mineurLogo}</span><br>
+                    <span class="small">né le ${naissance}</span>
+                </td>
+                <td>${m.droits || ""}</td>
+                <td>
+                    Proc. n°${m.procedureTexte || ""} <span class="badge">${m.numeroProcedureCourt || ""}</span><br>
+                    <span class="small">${m.infractionTexte || ""}</span>
+                </td>
+                <td>${m.enqueteurTexte || ""}</td>
+            </tr>
+        `;
+    });
+
+    afficherSidebar();
+}
+
+function afficherSidebar(){
+    afficherListeSidebar("side-en-cours", getListeParStatut("enCours"));
+    afficherListeSidebar("side-terminees", getListeParStatut("terminee"));
+    afficherListeSidebar("side-archivees", getListeParStatut("archivee"));
+}
+
+function afficherListeSidebar(containerId, liste){
+    const box = document.getElementById(containerId);
+
+    if (!box) return;
+
+    box.innerHTML = "";
+
+    if (liste.length === 0) {
+        box.innerHTML = "<div class='side-item'>Aucune mesure</div>";
+        return;
+    }
+
+    liste.forEach(item => {
+        const m = item.m;
+        const index = item.indexOriginal;
+        const numeroSimple = String(m.numero || "").replace(/[A-Z]/g, "");
+
+        box.innerHTML += `
+            <div class="side-mpl-card ${vueMPLCorrespondAuStatut(m.statut) ? "active" : ""}" onclick="ouvrirFicheMPL(${index})">
+                <div class="side-mpl-name">▣ ${m.nomPrenom || "Individu non renseigné"}</div>
+                <span class="badge">${numeroSimple}</span>
+            </div>
+        `;
+    });
+}
+
+function vueMPLCorrespondAuStatut(statut){
+    if (vueMPL === "enCours" && statut === "enCours") return true;
+    if (vueMPL === "terminees" && statut === "terminee") return true;
+    if (vueMPL === "archivees" && statut === "archivee") return true;
+    return false;
+}
+
+function ouvrirCreationMPL(){
+    document.getElementById("mpl-type").value = "GAV";
+    document.getElementById("mpl-individu").value = "";
+    document.getElementById("mpl-naissance").value = "";
+    document.getElementById("mpl-mineur").checked = false;
+    document.getElementById("mpl-sexe").value = "Masculin";
+    document.getElementById("mpl-localisation").value = "";
+    document.getElementById("mpl-debut").value = "";
+    document.getElementById("mpl-fin").value = "";
+    document.getElementById("mpl-procedure").value = "";
+    document.getElementById("mpl-infraction").value = "";
+    document.getElementById("mpl-enqueteur").value = "";
+
+    document.getElementById("modal-mpl").style.display = "flex";
+}
+
+function fermerCreationMPL(){
+    document.getElementById("modal-mpl").style.display = "none";
+}
+
+function calculerFinAutomatique(){
+    const type = document.getElementById("mpl-type").value;
+    const debutInput = document.getElementById("mpl-debut");
+    const finInput = document.getElementById("mpl-fin");
+
+    if (!debutInput.value) return;
+
+    const debut = new Date(debutInput.value);
+    const fin = new Date(debut);
+
+    if (type === "GAV") {
+        fin.setHours(fin.getHours() + 24);
+    }
+
+    if (type === "RETMIN") {
+        fin.setHours(fin.getHours() + 7);
+    }
+
+    finInput.value = toDatetimeLocal(fin);
+}
+
+function creerMPL(){
+    const type = document.getElementById("mpl-type").value;
+    const numero = genererNumeroMesure(type);
+    const numeroProcedureCourt = genererNumeroProcedureCourt();
+
+    const nomPrenom = document.getElementById("mpl-individu").value.trim();
+    const naissance = document.getElementById("mpl-naissance").value;
+    const mineur = document.getElementById("mpl-mineur").checked;
+    const sexe = document.getElementById("mpl-sexe").value;
+    const localisationTexte = document.getElementById("mpl-localisation").value.trim();
+    const procedureTexte = document.getElementById("mpl-procedure").value.trim();
+    const infractionTexte = document.getElementById("mpl-infraction").value.trim();
+    const enqueteurTexte = document.getElementById("mpl-enqueteur").value.trim();
+    const debut = document.getElementById("mpl-debut").value;
+    const fin = document.getElementById("mpl-fin").value;
+
+    if (!nomPrenom || !naissance || !localisationTexte || !debut || !fin || !procedureTexte || !infractionTexte || !enqueteurTexte) {
+        alert("Veuillez remplir tous les champs obligatoires.");
+        return;
+    }
+
+    mpl.push({
+        type,
+        numero,
+        numeroProcedureCourt,
+        debut,
+        fin,
+        nomPrenom,
+        naissance,
+        mineur,
+        sexe,
+        localisationTexte,
+        procedureTexte,
+        infractionTexte,
+        enqueteurTexte,
+        droits: "👁 ⚖ 🩺 🟢",
+        statut: "enCours",
+        historique: [{
+            date: new Date().toISOString(),
+            type: "Mesure créée"
+        }],
+        observations: ""
+    });
+
+    sauvegarderMPL();
+    fermerCreationMPL();
+    afficherMPL();
+    afficherSidebar();
+}
+
+function ouvrirFicheMPL(index){
+    const m = mpl[index];
+    if (!m) return;
+
+    document.querySelector("table").style.display = "none";
+    document.querySelector(".table-tools").style.display = "none";
+    document.getElementById("fiche-mpl").style.display = "block";
+
+    const sexeLogo = m.sexe === "Masculin" ? "♂" : m.sexe === "Féminin" ? "♀" : "";
+    const mineurLogo = m.mineur ? " 🧒" : "";
+
+    document.getElementById("fiche-mpl").innerHTML = `
+        <div class="fiche-box">
+            <div class="fiche-header">
+                <div>
+                    <h2>${nomCompletType(m)} ${sexeLogo} ${m.nomPrenom}${mineurLogo}</h2>
+                    <p>
+                        Initialisée le ${formatDate(m.debut)}<br>
+                        pour une durée de ${dureeTexte(m)}
+                    </p>
+                </div>
+
+                <div class="fiche-location">
+                    ${m.numero} - CPN VANNES<br>
+                    ${m.localisationTexte}
+                </div>
+            </div>
+
+            <div class="fiche-section">
+                <strong>Procédure & infraction :</strong><br>
+                Proc. n°${m.procedureTexte}<br>
+                <span class="small">${m.infractionTexte}</span>
+            </div>
+
+            <div class="fiche-section">
+                <strong>Identité :</strong><br>
+                ${m.nomPrenom}<br>
+                Né le ${formatNaissance(m.naissance)}<br>
+                Mineur : ${m.mineur ? "Oui" : "Non"}<br>
+                Sexe : ${m.sexe}
+            </div>
+
+            <div class="fiche-section">
+                <strong>Localisation :</strong><br>
+                ${m.localisationTexte}
+            </div>
+
+            <div class="fiche-section">
+                <strong>Enquêteur responsable :</strong><br>
+                ${m.enqueteurTexte}
+            </div>
+
+            <div class="fiche-actions-grid">
+                <button class="round-action green" onclick="ajouterHistoriqueMPL(${index}, 'Notification des droits effectuée')">💬<br>Notification</button>
+                <button class="round-action gray" onclick="ajouterHistoriqueMPL(${index}, 'Avocat demandé / avisé')">⚖<br>Avocat</button>
+                <button class="round-action gray" onclick="ajouterHistoriqueMPL(${index}, 'Médecin demandé / avisé')">🩺<br>Médecin</button>
+                <button class="round-action gray" onclick="prolongerMPL(${index})">➜<br>Prolonger</button>
+                <button class="round-action orange" onclick="modifierInfosMPL(${index})">✎<br>Modifier</button>
+                <button class="round-action red" onclick="terminerMPLDepuisFiche(${index})">⌛<br>Terminée</button>
+                <button class="round-action gray" onclick="archiverMPLDepuisFiche(${index})">▣<br>Archiver</button>
+            </div>
+
+            <div class="fiche-section">
+                <button class="btn" onclick="modifierObservationsMPL(${index})">Modifier les observations</button>
+                <p>${m.observations || "Aucune observation"}</p>
+            </div>
+
+            <div class="fiche-section">
+                <h3>Historique</h3>
+                <div class="timeline-mpl">
+                    ${(m.historique || []).map(h => `
+                        <div class="timeline-row">
+                            <span>${formatDate(h.date)}</span>
+                            <strong>${h.type}</strong>
+                        </div>
+                    `).join("") || "Aucun évènement enregistré."}
+                </div>
+            </div>
+
+            <div class="fiche-actions">
+                <button class="btn" onclick="retourListeMPL()">Retour liste</button>
+            </div>
+        </div>
+    `;
+}
+
+function ajouterHistoriqueMPL(index, type){
+    const m = mpl[index];
+    if (!m) return;
+
+    if (!m.historique) m.historique = [];
+
+    m.historique.push({
+        date: new Date().toISOString(),
+        type
+    });
+
+    sauvegarderMPL();
+    ouvrirFicheMPL(index);
+    afficherSidebar();
+}
+
+function modifierObservationsMPL(index){
+    const m = mpl[index];
+    if (!m) return;
+
+    const texte = prompt("Observations :", m.observations || "");
+    if (texte === null) return;
+
+    m.observations = texte;
+    ajouterHistoriqueMPL(index, "Observation modifiée");
+}
+
+function terminerMPLDepuisFiche(index){
+    const m = mpl[index];
+    if (!m) return;
+
+    if (!confirm("Terminer cette mesure ?")) return;
+
+    m.statut = "terminee";
+    m.dateTerminee = new Date().toISOString();
+
+    if (!m.historique) m.historique = [];
+    m.historique.push({
+        date: new Date().toISOString(),
+        type: "Mesure terminée"
+    });
+
+    sauvegarderMPL();
+    vueMPL = "terminees";
+    retourListeMPL();
+    afficherMPL();
+    afficherSidebar();
+}
+
+function archiverMPLDepuisFiche(index){
+    const m = mpl[index];
+    if (!m) return;
+
+    if (!confirm("Archiver cette mesure ?")) return;
+
+    m.statut = "archivee";
+    m.dateArchivee = new Date().toISOString();
+
+    if (!m.historique) m.historique = [];
+    m.historique.push({
+        date: new Date().toISOString(),
+        type: "Mesure archivée"
+    });
+
+    sauvegarderMPL();
+    vueMPL = "archivees";
+    retourListeMPL();
+    afficherMPL();
+    afficherSidebar();
+}
+
+function prolongerMPL(index){
+    const m = mpl[index];
+    if (!m) return;
+
+    const debut = new Date(m.debut);
+    const fin = new Date(m.fin);
+
+    if (m.type === "GAV") {
+        fin.setHours(fin.getHours() + 24);
+    }
+
+    if (m.type === "RETMIN") {
+        const max = new Date(debut);
+        max.setHours(max.getHours() + 12);
+
+        if (fin >= max) {
+            alert("RETMIN : durée maximale de 12 heures atteinte.");
+            return;
+        }
+
+        fin.setHours(fin.getHours() + 1);
+
+        if (fin > max) {
+            fin.setTime(max.getTime());
+        }
+    }
+
+    m.fin = toDatetimeLocal(fin);
+
+    if (!m.historique) m.historique = [];
+    m.historique.push({
+        date: new Date().toISOString(),
+        type: "Mesure prolongée"
+    });
+
+    sauvegarderMPL();
+    ouvrirFicheMPL(index);
+    afficherSidebar();
+}
+
+function modifierInfosMPL(index){
+    const m = mpl[index];
+    if (!m) return;
+
+    const nouvelleFin = prompt(
+        "Nouvelle date de fin au format AAAA-MM-JJTHH:MM",
+        m.fin
+    );
+
+    if (!nouvelleFin) return;
+
+    const debut = new Date(m.debut);
+    const fin = new Date(nouvelleFin);
+    const diff = fin - debut;
+
+    if (diff <= 0) {
+        alert("La fin doit être postérieure au début.");
+        return;
+    }
+
+    if (m.type === "GAV") {
+        const vingtQuatreHeures = 24 * 60 * 60 * 1000;
+
+        if (diff % vingtQuatreHeures !== 0) {
+            alert("GAV : durée uniquement par créneaux de 24h.");
+            return;
+        }
+    }
+
+    if (m.type === "RETMIN") {
+        const max = 12 * 60 * 60 * 1000;
+
+        if (diff > max) {
+            alert("RETMIN : 12 heures maximum.");
+            return;
+        }
+    }
+
+    m.fin = nouvelleFin;
+
+    if (!m.historique) m.historique = [];
+    m.historique.push({
+        date: new Date().toISOString(),
+        type: "Date de fin modifiée"
+    });
+
+    sauvegarderMPL();
+    ouvrirFicheMPL(index);
+    afficherSidebar();
+}
+
+function retourListeMPL(refresh = true){
+    const fiche = document.getElementById("fiche-mpl");
+    if (fiche) fiche.style.display = "none";
+
+    document.querySelector("table").style.display = "table";
+    document.querySelector(".table-tools").style.display = "flex";
+
+    if (refresh) afficherMPL();
+}
+
+function genererNumeroMesure(type){
+    const compteurs = JSON.parse(localStorage.getItem("igavCompteurs")) || {
+        GAV: 4871,
+        RETMIN: 141
+    };
+
+    compteurs[type] = (compteurs[type] || 0) + 1;
+
+    localStorage.setItem("igavCompteurs", JSON.stringify(compteurs));
+
+    if (type === "GAV") return "G" + compteurs[type];
+    if (type === "RETMIN") return "RMIN" + compteurs[type];
+
+    return "M" + compteurs[type];
+}
+
+function genererNumeroProcedureCourt(){
+    let compteur = Number(localStorage.getItem("igavProcedureCourt")) || 3752;
+    compteur++;
+
+    localStorage.setItem("igavProcedureCourt", compteur);
+
+    return compteur;
+}
+
+function dureeTexte(m){
+    const minutes = Math.round((new Date(m.fin) - new Date(m.debut)) / 60000);
+    const heures = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+
+    if (mins === 0) return `${heures}h00`;
+
+    return `${heures}h${String(mins).padStart(2, "0")}`;
+}
+
+function nomCompletType(m){
+    if (m.type === "GAV") return "Garde à Vue";
+    if (m.type === "RETMIN") return "Retenue Mineur";
+    return m.type;
+}
+
+function toDatetimeLocal(date){
+    const offset = date.getTimezoneOffset();
+    const local = new Date(date.getTime() - offset * 60000);
+    return local.toISOString().slice(0,16);
+}
+
+function formatDate(value){
+    if(!value) return "";
+    return new Date(value).toLocaleString("fr-FR", {
+        day:"2-digit",
+        month:"2-digit",
+        year:"numeric",
+        hour:"2-digit",
+        minute:"2-digit"
+    });
+}
+
+function formatNaissance(value){
+    if(!value) return "";
+    return new Date(value).toLocaleDateString("fr-FR");
+}
+
+document.getElementById("mpl-debut").addEventListener("change", calculerFinAutomatique);
+document.getElementById("mpl-type").addEventListener("change", calculerFinAutomatique);
+
+chargerUtilisateurIGAV();
+afficherMPL();
+afficherSidebar();
+</script>
+</body>
+</html>
