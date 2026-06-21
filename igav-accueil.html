@@ -219,22 +219,6 @@ td{
     margin-left:4px;
 }
 
-.right-tools{
-    position:fixed;
-    right:8px;
-    top:270px;
-    background:#65798e;
-    border-radius:4px;
-    overflow:hidden;
-}
-
-.tool{
-    color:white;
-    padding:13px;
-    border-bottom:1px solid #7f90a0;
-    text-align:center;
-}
-
 .small{
     font-size:12px;
     color:#666;
@@ -383,33 +367,63 @@ td{
     flex-wrap:wrap;
 }
 
-.round-action{
-    width:92px;
-    height:82px;
-    border-radius:50%;
-    border:none;
-    cursor:pointer;
+.action-toolbar{
+    margin:22px 0;
+    background:#f7f7f7;
+    border:1px solid #d0d0d0;
+    padding:16px;
+}
+
+.action-toolbar-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:16px;
+}
+
+.action-indicators{
+    display:flex;
+    gap:14px;
+    flex-wrap:wrap;
+}
+
+.action-pill{
+    min-width:92px;
+    height:74px;
+    border-radius:18px;
+    border:1px solid #c9c9c9;
+    background:#e3e3e3;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
     font-size:12px;
+    box-shadow:0 1px 4px rgba(0,0,0,.15);
+    cursor:default;
+}
+
+.action-pill .icon{
+    font-size:18px;
+    margin-bottom:5px;
+}
+
+.action-pill.none{
+    background:#e3e3e3;
     color:#333;
-    box-shadow:0 1px 4px rgba(0,0,0,.2);
 }
 
-.round-action.green{
-    background:#69b96d;
+.action-pill.pending{
+    background:#e6a83f;
     color:white;
 }
 
-.round-action.gray{
-    background:#e2e2e2;
-}
-
-.round-action.orange{
-    background:#d9a44d;
+.action-pill.done{
+    background:#67b86b;
     color:white;
 }
 
-.round-action.red{
-    background:#b95b5b;
+.action-pill.bad{
+    background:#bd5a5a;
     color:white;
 }
 
@@ -431,6 +445,61 @@ td{
     font-weight:bold;
     margin-right:20px;
 }
+
+/* GESTION CELLULES */
+.cell-grid{
+    display:grid;
+    grid-template-columns:repeat(4, minmax(180px, 1fr));
+    gap:14px;
+    margin-top:20px;
+}
+
+.cell-card{
+    background:white;
+    border:1px solid #ccc;
+    padding:14px;
+    min-height:125px;
+}
+
+.cell-card.free{
+    border-left:5px solid #66a86f;
+}
+
+.cell-card.occupied{
+    border-left:5px solid #b95b5b;
+}
+
+.cell-card strong{
+    display:block;
+    margin-bottom:8px;
+}
+
+.cell-status{
+    font-weight:bold;
+    margin-bottom:8px;
+}
+
+.cell-status.free{
+    color:#34883c;
+}
+
+.cell-status.occupied{
+    color:#8d2d2d;
+}
+
+.cell-card-actions{
+    margin-top:10px;
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+}
+
+.cell-card-actions .btn{
+    font-size:12px;
+    padding:5px 8px;
+}
+
+
 </style>
 </head>
 <body>
@@ -480,7 +549,7 @@ td{
 
         <div class="actions">
             <button class="btn" onclick="ouvrirCreationMPL()">+ Créer une MPL</button>
-            <button class="btn">▣ Gestion des cellules</button>
+            <button class="btn" onclick="ouvrirGestionCellules()">▣ Gestion des cellules</button>
         </div>
 
         <div class="table-tools">
@@ -505,14 +574,8 @@ td{
         </table>
 
         <section id="fiche-mpl" style="display:none;"></section>
+        <section id="cellules-view" style="display:none;"></section>
     </main>
-</div>
-
-<div class="right-tools">
-    <div class="tool">🩺</div>
-    <div class="tool">📷</div>
-    <div class="tool">🍴</div>
-    <div class="tool">👁</div>
 </div>
 
 <div id="modal-mpl" class="modal">
@@ -547,14 +610,14 @@ td{
                 <input id="mpl-naissance" type="date">
             </div>
 
-            <div class="checkbox-row">
-                <input id="mpl-mineur" type="checkbox">
-                <label for="mpl-mineur">Mineur</label>
-            </div>
+            <div class="form-field">
+    <label>Statut âge</label>
+    <input id="mpl-statut-age" type="text" readonly placeholder="Renseigné automatiquement">
+</div>
 
             <div class="form-field">
                 <label>Localisation</label>
-                <input id="mpl-localisation" placeholder="HP Vannes - Cellule 3">
+                <select id="mpl-localisation"></select>
             </div>
 
             <div class="form-field">
@@ -591,8 +654,123 @@ td{
     </div>
 </div>
 
+<div id="modal-action-mpl" class="modal">
+    <div class="modal-box">
+        <h2>Déclarer une action</h2>
+
+        <div class="form-grid">
+
+            <div class="form-field">
+                <label>Action</label>
+                <select id="action-type">
+                    <option value="">Sélectionner une action</option>
+                    <option value="notification">Notification des droits</option>
+                    <option value="avocat">Avocat</option>
+                    <option value="medecin">Médecin</option>
+                    <option value="repas">Repas</option>
+                    <option value="repos">Repos</option>
+                    <option value="audition">Audition</option>
+                    <option value="prolongation">Prolongation</option>
+                    <option value="modification">Modification des informations</option>
+                    <option value="fin">Fin de mesure</option>
+                    <option value="archivage">Archivage</option>
+                </select>
+            </div>
+
+            <div class="form-field">
+                <label>Statut</label>
+                <select id="action-statut">
+                    <option value="pending">En cours</option>
+                    <option value="done">Réalisé / effectué</option>
+                    <option value="bad">Refusé / hors délai</option>
+                </select>
+            </div>
+
+            <div class="form-field full">
+                <label>Commentaire</label>
+                <input id="action-commentaire" placeholder="Commentaire optionnel">
+            </div>
+
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn" onclick="fermerDeclarationAction()">Annuler</button>
+            <button class="btn" onclick="validerDeclarationAction()">Valider</button>
+        </div>
+    </div>
+</div>
+
+<div id="modal-mouvement-cellule" class="modal">
+    <div class="modal-box">
+        <h2>Mouvement de cellule</h2>
+
+        <div class="form-grid">
+            <div class="form-field">
+                <label>MPL concernée</label>
+                <input id="mouvement-mpl-label" type="text" readonly>
+            </div>
+
+            <div class="form-field">
+                <label>Nouvelle cellule</label>
+                <select id="mouvement-cellule"></select>
+            </div>
+
+            <div class="form-field full">
+                <label>Motif / observation</label>
+                <input id="mouvement-commentaire" placeholder="Exemple : nettoyage cellule, séparation, consigne OPJ...">
+            </div>
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn" onclick="fermerMouvementCellule()">Annuler</button>
+            <button class="btn" onclick="validerMouvementCellule()">Valider le mouvement</button>
+        </div>
+    </div>
+
 <script>
 let vueMPL = "enCours";
+let actionMPLIndex = null;
+let mplSelectionnee = null;
+let mouvementMPLIndex = null;
+
+const CELLULES_IGAV = [
+    "Cellule 1",
+    "Cellule 2",
+    "Cellule 3",
+    "Cellule 4",
+    "Cellule 5A",
+    "Cellule 5B",
+    "Cellule 5C"
+];
+
+function chargerCellulesDisponibles(){
+    const select = document.getElementById("mpl-localisation");
+    if (!select) return;
+
+    const cellulesOccupees = mpl
+        .filter(m => m.statut === "enCours")
+        .map(m => m.localisationTexte);
+
+    select.innerHTML = `<option value="">Sélectionner une cellule</option>`;
+
+    CELLULES_IGAV.forEach(cellule => {
+        const occupee = cellulesOccupees.includes(cellule);
+
+        select.innerHTML += `
+            <option value="${cellule}" ${occupee ? "disabled" : ""}>
+                ${cellule}${occupee ? " - occupée" : ""}
+            </option>
+        `;
+    });
+} 
+
+function celluleOccupee(cellule, indexAExclure = null){
+    return mpl.some((m, index) =>
+        index !== indexAExclure &&
+        m.statut === "enCours" &&
+        m.localisationTexte === cellule
+    );
+}
 
 function chargerUtilisateurIGAV(){
     const matricule =
@@ -609,7 +787,7 @@ function chargerUtilisateurIGAV(){
         return;
     }
 
-    const agent = agents?.[matricule];
+    const agent = window.agents?.[matricule];
 
     if (!agent) {
         userBox.textContent = `${matricule} - UTILISATEUR INCONNU`;
@@ -621,6 +799,30 @@ function chargerUtilisateurIGAV(){
 }
 
 let mpl = JSON.parse(localStorage.getItem("igavMPL")) || [];
+
+const ACTIONS_PAR_DEFAUT = {
+    notification: "none",
+    avocat: "none",
+    medecin: "none",
+    repas: "none",
+    repos: "none",
+    audition: "none",
+    prolongation: "none",
+    modification: "none",
+    fin: "none",
+    archivage: "none"
+};
+
+function normaliserMPL(){
+    mpl.forEach(m => {
+        if (!m.historique) m.historique = [];
+        if (!m.actions) m.actions = {};
+        m.actions = { ...ACTIONS_PAR_DEFAUT, ...m.actions };
+        if (m.naissance) m.mineur = estMineurDepuisNaissance(m.naissance);
+    });
+
+    sauvegarderMPL();
+}
 
 function sauvegarderMPL(){
     localStorage.setItem("igavMPL", JSON.stringify(mpl));
@@ -768,7 +970,7 @@ function afficherListeSidebar(containerId, liste){
         const numeroSimple = String(m.numero || "").replace(/[A-Z]/g, "");
 
         box.innerHTML += `
-            <div class="side-mpl-card ${vueMPLCorrespondAuStatut(m.statut) ? "active" : ""}" onclick="ouvrirFicheMPL(${index})">
+            <div class="side-mpl-card ${mplSelectionnee === index ? "active" : ""}" onclick="ouvrirFicheMPL(${index})">
                 <div class="side-mpl-name">▣ ${m.nomPrenom || "Individu non renseigné"}</div>
                 <span class="badge">${numeroSimple}</span>
             </div>
@@ -787,9 +989,10 @@ function ouvrirCreationMPL(){
     document.getElementById("mpl-type").value = "GAV";
     document.getElementById("mpl-individu").value = "";
     document.getElementById("mpl-naissance").value = "";
-    document.getElementById("mpl-mineur").checked = false;
+    document.getElementById("mpl-statut-age").value = "";
     document.getElementById("mpl-sexe").value = "Masculin";
-    document.getElementById("mpl-localisation").value = "";
+    chargerCellulesDisponibles();
+document.getElementById("mpl-localisation").value = "";
     document.getElementById("mpl-debut").value = "";
     document.getElementById("mpl-fin").value = "";
     document.getElementById("mpl-procedure").value = "";
@@ -818,7 +1021,7 @@ function calculerFinAutomatique(){
     }
 
     if (type === "RETMIN") {
-        fin.setHours(fin.getHours() + 7);
+        fin.setHours(fin.getHours() + 12);
     }
 
     finInput.value = toDatetimeLocal(fin);
@@ -831,7 +1034,7 @@ function creerMPL(){
 
     const nomPrenom = document.getElementById("mpl-individu").value.trim();
     const naissance = document.getElementById("mpl-naissance").value;
-    const mineur = document.getElementById("mpl-mineur").checked;
+    const mineur = estMineurDepuisNaissance(naissance);
     const sexe = document.getElementById("mpl-sexe").value;
     const localisationTexte = document.getElementById("mpl-localisation").value.trim();
     const procedureTexte = document.getElementById("mpl-procedure").value.trim();
@@ -842,6 +1045,12 @@ function creerMPL(){
 
     if (!nomPrenom || !naissance || !localisationTexte || !debut || !fin || !procedureTexte || !infractionTexte || !enqueteurTexte) {
         alert("Veuillez remplir tous les champs obligatoires.");
+        return;
+    }
+
+    if (celluleOccupee(localisationTexte)) {
+        alert("Cette cellule est déjà occupée par une mesure en cours.");
+        chargerCellulesDisponibles();
         return;
     }
 
@@ -865,8 +1074,21 @@ function creerMPL(){
             date: new Date().toISOString(),
             type: "Mesure créée"
         }],
-        observations: ""
+        observations: "",
+        actions: {
+        notification: "none",
+        avocat: "none",
+        medecin: "none",
+        repas: "none",
+        repos: "none",
+        audition: "none",
+        prolongation: "none",
+        modification: "none",
+        fin: "none",
+        archivage: "none"
+        },
     });
+    
 
     sauvegarderMPL();
     fermerCreationMPL();
@@ -874,12 +1096,56 @@ function creerMPL(){
     afficherSidebar();
 }
 
+function calculerAgeDepuisNaissance(dateNaissance){
+    if (!dateNaissance) return null;
+
+    const naissance = new Date(dateNaissance);
+    const aujourdHui = new Date();
+
+    let age = aujourdHui.getFullYear() - naissance.getFullYear();
+    const mois = aujourdHui.getMonth() - naissance.getMonth();
+
+    if (mois < 0 || (mois === 0 && aujourdHui.getDate() < naissance.getDate())) {
+        age--;
+    }
+
+    return age;
+}
+
+function estMineurDepuisNaissance(dateNaissance){
+    const age = calculerAgeDepuisNaissance(dateNaissance);
+    if (age === null) return null;
+
+    return age < 18;
+}
+
+function mettreAJourStatutAge(){
+    const naissance = document.getElementById("mpl-naissance").value;
+    const champ = document.getElementById("mpl-statut-age");
+
+    if (!champ) return;
+
+    if (!naissance) {
+        champ.value = "";
+        return;
+    }
+
+    const mineur = estMineurDepuisNaissance(naissance);
+    champ.value = mineur ? "Mineur" : "Majeur";
+}
+
 function ouvrirFicheMPL(index){
     const m = mpl[index];
     if (!m) return;
 
+    mplSelectionnee = index;
+    afficherSidebar();
+    m.mineur = estMineurDepuisNaissance(m.naissance);
+
     document.querySelector("table").style.display = "none";
     document.querySelector(".table-tools").style.display = "none";
+    const cellulesView = document.getElementById("cellules-view");
+    if (cellulesView) cellulesView.style.display = "none";
     document.getElementById("fiche-mpl").style.display = "block";
 
     const sexeLogo = m.sexe === "Masculin" ? "♂" : m.sexe === "Féminin" ? "♀" : "";
@@ -912,29 +1178,21 @@ function ouvrirFicheMPL(index){
                 <strong>Identité :</strong><br>
                 ${m.nomPrenom}<br>
                 Né le ${formatNaissance(m.naissance)}<br>
-                Mineur : ${m.mineur ? "Oui" : "Non"}<br>
+                Mineur : ${estMineurDepuisNaissance(m.naissance) ? "Oui" : "Non"}<br>
                 Sexe : ${m.sexe}
             </div>
 
             <div class="fiche-section">
                 <strong>Localisation :</strong><br>
-                ${m.localisationTexte}
+                ${m.localisationTexte}<br><br>
+                ${m.statut === "enCours" ? `<button class="btn" onclick="ouvrirMouvementCellule(${index})">Changer de cellule</button>` : ""}
             </div>
 
             <div class="fiche-section">
                 <strong>Enquêteur responsable :</strong><br>
                 ${m.enqueteurTexte}
             </div>
-
-            <div class="fiche-actions-grid">
-                <button class="round-action green" onclick="ajouterHistoriqueMPL(${index}, 'Notification des droits effectuée')">💬<br>Notification</button>
-                <button class="round-action gray" onclick="ajouterHistoriqueMPL(${index}, 'Avocat demandé / avisé')">⚖<br>Avocat</button>
-                <button class="round-action gray" onclick="ajouterHistoriqueMPL(${index}, 'Médecin demandé / avisé')">🩺<br>Médecin</button>
-                <button class="round-action gray" onclick="prolongerMPL(${index})">➜<br>Prolonger</button>
-                <button class="round-action orange" onclick="modifierInfosMPL(${index})">✎<br>Modifier</button>
-                <button class="round-action red" onclick="terminerMPLDepuisFiche(${index})">⌛<br>Terminée</button>
-                <button class="round-action gray" onclick="archiverMPLDepuisFiche(${index})">▣<br>Archiver</button>
-            </div>
+            ${genererBlocActionsMPL(index, m)}
 
             <div class="fiche-section">
                 <button class="btn" onclick="modifierObservationsMPL(${index})">Modifier les observations</button>
@@ -958,6 +1216,188 @@ function ouvrirFicheMPL(index){
             </div>
         </div>
     `;
+}
+
+function genererBlocActionsMPL(index, m){
+    const actions = m.actions || {};
+
+    const liste = [
+        ["notification", "💬", "Notification"],
+        ["avocat", "⚖", "Avocat"],
+        ["medecin", "🩺", "Médecin"],
+        ["repas", "🍽", "Repas"],
+        ["repos", "☕", "Repos"],
+        ["audition", "📝", "Audition"],
+        ["prolongation", "➜", "Prolongation"],
+        ["modification", "✎", "Modification"],
+        ["fin", "⌛", "Fin"],
+        ["archivage", "▣", "Archivage"]
+    ];
+
+    return `
+        <div class="action-toolbar">
+            <div class="action-toolbar-header">
+                <strong>Suivi des actions</strong>
+                <button class="btn" onclick="ouvrirDeclarationAction(${index})">
+                    + Déclarer une action
+                </button>
+            </div>
+
+            <div class="action-indicators">
+                ${liste.map(([key, icon, label]) => {
+                    const statut = actions[key] || "none";
+                    return `
+                        <div class="action-pill ${statut}">
+                            <div class="icon">${icon}</div>
+                            <div>${label}</div>
+                        </div>
+                    `;
+                }).join("")}
+            </div>
+        </div>
+    `;
+}
+
+function ouvrirDeclarationAction(index){
+    const m = mpl[index];
+    if (!m) return;
+
+    if (m.statut === "archivee") {
+        alert("Mesure archivée : aucune action supplémentaire possible.");
+        return;
+    }
+
+    actionMPLIndex = index;
+
+    document.getElementById("action-type").value = "";
+    document.getElementById("action-statut").value = "done";
+    document.getElementById("action-commentaire").value = "";
+
+    document.getElementById("modal-action-mpl").style.display = "flex";
+}
+
+function fermerDeclarationAction(){
+    actionMPLIndex = null;
+    document.getElementById("modal-action-mpl").style.display = "none";
+}
+
+function validerDeclarationAction(){
+    if (actionMPLIndex === null) return;
+
+    const m = mpl[actionMPLIndex];
+    if (!m) return;
+
+    const type = document.getElementById("action-type").value;
+    const statut = document.getElementById("action-statut").value;
+    const commentaire = document.getElementById("action-commentaire").value.trim();
+
+    if (!type) {
+        alert("Veuillez sélectionner une action.");
+        return;
+    }
+
+    if (!m.actions) {
+        m.actions = {};
+    }
+
+    m.actions[type] = statut;
+
+    const libelleAction = getLibelleAction(type);
+    const libelleStatut = getLibelleStatut(statut);
+
+    if (!m.historique) m.historique = [];
+
+    m.historique.push({
+        date: new Date().toISOString(),
+        type: `${libelleAction} : ${libelleStatut}${commentaire ? " - " + commentaire : ""}`
+    });
+
+    if (type === "prolongation" && statut === "done") {
+        appliquerProlongationTechnique(m);
+    }
+
+    if (type === "fin" && statut === "done") {
+        m.statut = "terminee";
+        m.dateTerminee = new Date().toISOString();
+        vueMPL = "terminees";
+    }
+
+    if (type === "archivage" && statut === "done") {
+        m.statut = "archivee";
+        m.dateArchivee = new Date().toISOString();
+        vueMPL = "archivees";
+    }
+
+    const indexAMettreAJour = actionMPLIndex;
+
+    sauvegarderMPL();
+    fermerDeclarationAction();
+
+    if (m.statut === "enCours") {
+        ouvrirFicheMPL(indexAMettreAJour);
+    } else {
+        mplSelectionnee = null;
+        retourListeMPL();
+        afficherMPL();
+    }
+
+    afficherSidebar();
+}
+
+function getLibelleAction(type){
+    const labels = {
+        notification: "Notification des droits",
+        avocat: "Avocat",
+        medecin: "Médecin",
+        repas: "Repas",
+        repos: "Repos",
+        audition: "Audition",
+        prolongation: "Prolongation",
+        modification: "Modification des informations",
+        fin: "Fin de mesure",
+        archivage: "Archivage"
+    };
+
+    return labels[type] || type;
+}
+
+function getLibelleStatut(statut){
+    const labels = {
+        none: "Non effectué",
+        pending: "En cours",
+        done: "Réalisé / effectué",
+        bad: "Refusé / hors délai"
+    };
+
+    return labels[statut] || statut;
+}
+
+function appliquerProlongationTechnique(m){
+    const debut = new Date(m.debut);
+    const fin = new Date(m.fin);
+
+    if (m.type === "GAV") {
+        fin.setHours(fin.getHours() + 24);
+        m.fin = toDatetimeLocal(fin);
+    }
+
+    if (m.type === "RETMIN") {
+        const max = new Date(debut);
+        max.setHours(max.getHours() + 12);
+
+        if (fin >= max) {
+            alert("RETMIN : durée maximale de 12 heures déjà atteinte.");
+            return;
+        }
+
+        fin.setHours(fin.getHours() + 1);
+
+        if (fin > max) {
+            fin.setTime(max.getTime());
+        }
+
+        m.fin = toDatetimeLocal(fin);
+    }
 }
 
 function ajouterHistoriqueMPL(index, type){
@@ -1124,12 +1564,148 @@ function modifierInfosMPL(index){
 
 function retourListeMPL(refresh = true){
     const fiche = document.getElementById("fiche-mpl");
+    const cellules = document.getElementById("cellules-view");
+
     if (fiche) fiche.style.display = "none";
+    if (cellules) cellules.style.display = "none";
 
     document.querySelector("table").style.display = "table";
     document.querySelector(".table-tools").style.display = "flex";
 
     if (refresh) afficherMPL();
+}
+
+function ouvrirGestionCellules(){
+    retourListeMPL(false);
+
+    document.querySelector("table").style.display = "none";
+    document.querySelector(".table-tools").style.display = "none";
+    document.getElementById("fiche-mpl").style.display = "none";
+
+    const cellulesView = document.getElementById("cellules-view");
+    cellulesView.style.display = "block";
+
+    const enCours = mpl.filter(m => m.statut === "enCours");
+
+    cellulesView.innerHTML = `
+        <div class="fiche-box">
+            <h2>Gestion des cellules</h2>
+            <p class="small">Vue d'occupation des cellules et mouvements internes.</p>
+
+            <div class="cell-grid">
+                ${CELLULES_IGAV.map(cellule => {
+                    const occupant = enCours.find(m => m.localisationTexte === cellule);
+
+                    if (!occupant) {
+                        return `
+                            <div class="cell-card free">
+                                <strong>${cellule}</strong>
+                                <div class="cell-status free">Libre</div>
+                                <span class="small">Aucune MPL en cours.</span>
+                            </div>
+                        `;
+                    }
+
+                    const index = mpl.indexOf(occupant);
+
+                    return `
+                        <div class="cell-card occupied">
+                            <strong>${cellule}</strong>
+                            <div class="cell-status occupied">Occupée</div>
+                            <span class="small">
+                                ${occupant.numero} - ${occupant.nomPrenom}<br>
+                                Fin : ${formatDate(occupant.fin)}<br>
+                                Durée : ${dureeTexte(occupant)}
+                            </span>
+
+                            <div class="cell-card-actions">
+                                <button class="btn" onclick="ouvrirFicheMPL(${index})">Fiche</button>
+                                <button class="btn" onclick="ouvrirMouvementCellule(${index})">Mouvement</button>
+                            </div>
+                        </div>
+                    `;
+                }).join("")}
+            </div>
+
+            <div class="fiche-actions">
+                <button class="btn" onclick="retourListeMPL()">Retour liste</button>
+            </div>
+        </div>
+    `;
+}
+
+function ouvrirMouvementCellule(index){
+    const m = mpl[index];
+    if (!m) return;
+
+    if (m.statut !== "enCours") {
+        alert("Impossible de déplacer une mesure qui n'est pas en cours.");
+        return;
+    }
+
+    mouvementMPLIndex = index;
+
+    document.getElementById("mouvement-mpl-label").value =
+        `${m.numero} - ${m.nomPrenom} (${m.localisationTexte})`;
+
+    const select = document.getElementById("mouvement-cellule");
+    select.innerHTML = `<option value="">Sélectionner une nouvelle cellule</option>`;
+
+    CELLULES_IGAV.forEach(cellule => {
+        const celluleActuelle = cellule === m.localisationTexte;
+        const occupee = celluleOccupee(cellule, index);
+
+        select.innerHTML += `
+            <option value="${cellule}" ${celluleActuelle || occupee ? "disabled" : ""}>
+                ${cellule}${celluleActuelle ? " - cellule actuelle" : occupee ? " - occupée" : ""}
+            </option>
+        `;
+    });
+
+    document.getElementById("mouvement-commentaire").value = "";
+    document.getElementById("modal-mouvement-cellule").style.display = "flex";
+}
+
+function fermerMouvementCellule(){
+    mouvementMPLIndex = null;
+    document.getElementById("modal-mouvement-cellule").style.display = "none";
+}
+
+function validerMouvementCellule(){
+    if (mouvementMPLIndex === null) return;
+
+    const m = mpl[mouvementMPLIndex];
+    if (!m) return;
+
+    const nouvelleCellule = document.getElementById("mouvement-cellule").value;
+    const commentaire = document.getElementById("mouvement-commentaire").value.trim();
+
+    if (!nouvelleCellule) {
+        alert("Veuillez sélectionner une cellule.");
+        return;
+    }
+
+    if (celluleOccupee(nouvelleCellule, mouvementMPLIndex)) {
+        alert("Cette cellule est déjà occupée.");
+        ouvrirMouvementCellule(mouvementMPLIndex);
+        return;
+    }
+
+    const ancienneCellule = m.localisationTexte;
+    m.localisationTexte = nouvelleCellule;
+
+    if (!m.historique) m.historique = [];
+    m.historique.push({
+        date: new Date().toISOString(),
+        type: `Mouvement cellule : ${ancienneCellule} → ${nouvelleCellule}${commentaire ? " - " + commentaire : ""}`
+    });
+
+    sauvegarderMPL();
+    fermerMouvementCellule();
+
+    ouvrirFicheMPL(mouvementMPLIndex);
+    afficherMPL();
+    afficherSidebar();
 }
 
 function genererNumeroMesure(type){
@@ -1197,7 +1773,9 @@ function formatNaissance(value){
 
 document.getElementById("mpl-debut").addEventListener("change", calculerFinAutomatique);
 document.getElementById("mpl-type").addEventListener("change", calculerFinAutomatique);
+document.getElementById("mpl-naissance").addEventListener("change", mettreAJourStatutAge);
 
+normaliserMPL();
 chargerUtilisateurIGAV();
 afficherMPL();
 afficherSidebar();
